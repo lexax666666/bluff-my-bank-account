@@ -1,98 +1,217 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Twilio Voicemail Simulation Service
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A NestJS backend service that manages temporary phone number sessions for Twilio voicemail simulations. When users call an assigned phone number, they hear a custom greeting message. Phone numbers are automatically recycled based on session expiration without requiring cron jobs.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Features
 
-## Description
+- 🔒 **Transaction-safe phone number assignment** using PostgreSQL row-level locking
+- 📞 **Twilio webhook integration** for handling incoming calls
+- ⏰ **Automatic phone number recycling** based on expiration timestamps
+- 🛡️ **Twilio signature validation** for webhook security
+- 🗄️ **Drizzle ORM** for type-safe database operations
+- 🚀 **Built with NestJS** for scalable architecture
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Tech Stack
 
-## Project setup
+- **Framework**: NestJS v11
+- **Database**: PostgreSQL with Drizzle ORM
+- **Phone Service**: Twilio API
+- **Language**: TypeScript
+- **Validation**: class-validator & class-transformer
 
+## Prerequisites
+
+- Node.js v18+ 
+- PostgreSQL database
+- Twilio account with phone numbers
+- npm or yarn package manager
+
+## Installation
+
+1. Clone the repository:
 ```bash
-$ npm install
+git clone <repository-url>
+cd bluff-my-backaccount
 ```
 
-## Compile and run the project
-
+2. Install dependencies:
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm install
 ```
 
-## Run tests
-
+3. Set up environment variables:
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+cp .env.example .env
 ```
 
-## Deployment
+Edit `.env` with your configuration:
+```env
+# Database Configuration
+DATABASE_URL=postgresql://username:password@localhost:5432/voicemail_db
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+# Twilio Configuration
+TWILIO_ACCOUNT_SID=your_twilio_account_sid
+TWILIO_AUTH_TOKEN=your_twilio_auth_token
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+# Application Environment
+NODE_ENV=development
+PORT=3000
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+4. Run database migrations:
+```bash
+npm run db:generate
+npm run db:migrate
+```
 
-## Resources
+5. Seed the database with phone numbers:
+```bash
+npm run db:seed
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+## Running the Application
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+### Development
+```bash
+npm run start:dev
+```
 
-## Support
+### Production
+```bash
+npm run build
+npm run start:prod
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### Database Management
+```bash
+# Generate migrations
+npm run db:generate
 
-## Stay in touch
+# Run migrations
+npm run db:migrate
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+# Open Drizzle Studio (database GUI)
+npm run db:studio
+```
+
+## API Endpoints
+
+### Create Session
+```http
+POST /sessions/create
+Content-Type: application/json
+
+{
+  "userId": "user123",
+  "greetingUrl": "https://example.com/greeting.mp3",
+  "expiresInMinutes": 30  // optional, default: 30
+}
+
+Response:
+{
+  "success": true,
+  "data": {
+    "sessionId": "uuid",
+    "phoneNumber": "+1234567890",
+    "expiresAt": "2024-01-01T12:30:00.000Z"
+  }
+}
+```
+
+### Handle Incoming Call (Twilio Webhook)
+```http
+POST /twilio/incoming-call
+X-Twilio-Signature: <signature>
+
+# Twilio will send form data with call details
+# Returns TwiML response
+```
+
+### Expire Session Manually
+```http
+POST /sessions/:id/expire
+
+Response:
+{
+  "success": true,
+  "message": "Session expired successfully"
+}
+```
+
+## Database Schema
+
+### phone_numbers
+- `id` (UUID) - Primary key
+- `number` (string) - Unique phone number
+- `expires_at` (timestamp) - When the number becomes available
+
+### user_sessions
+- `id` (UUID) - Primary key
+- `user_id` (string) - User identifier
+- `phone_number_id` (UUID) - Foreign key to phone_numbers
+- `greeting_url` (string) - URL to greeting audio file
+- `expires_at` (timestamp) - Session expiration time
+
+## How It Works
+
+1. **Session Creation**: When a user requests a session, the system:
+   - Starts a database transaction
+   - Finds an available phone number (where `expires_at` is null or in the past)
+   - Uses `SELECT ... FOR UPDATE SKIP LOCKED` to prevent race conditions
+   - Updates the phone number's `expires_at` timestamp
+   - Creates a session record
+   - Returns the assigned phone number
+
+2. **Incoming Calls**: When someone calls an assigned number:
+   - Twilio sends a webhook to `/twilio/incoming-call`
+   - The system validates the Twilio signature
+   - Looks up the active session for the phone number
+   - Returns TwiML to play the greeting and hang up
+
+3. **Number Recycling**: Numbers become available automatically when:
+   - The `expires_at` timestamp passes
+   - A session is manually expired via the API
+
+## Security
+
+- **Twilio Signature Validation**: All webhook requests are validated using the `X-Twilio-Signature` header
+- **Environment Variables**: Sensitive credentials are stored in environment variables
+- **Input Validation**: All API inputs are validated using DTOs and class-validator
+
+## Testing
+
+```bash
+# Unit tests
+npm run test
+
+# E2E tests
+npm run test:e2e
+
+# Test coverage
+npm run test:cov
+```
+
+## Development
+
+### Linting
+```bash
+npm run lint
+```
+
+### Type Checking
+The project uses TypeScript with strict type checking. Build errors will catch type issues:
+```bash
+npm run build
+```
+
+## Deployment Considerations
+
+1. Ensure PostgreSQL connection pooling is configured for production
+2. Set `NODE_ENV=production` in production environment
+3. Configure Twilio webhook URLs to point to your production domain
+4. Use HTTPS for all webhook endpoints
+5. Consider implementing rate limiting for the session creation endpoint
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+This project is [MIT licensed](LICENSE).
