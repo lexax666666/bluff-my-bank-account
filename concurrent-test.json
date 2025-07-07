@@ -1,0 +1,90 @@
+{
+  "info": {
+    "name": "Concurrent Session Test",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create Session - User 1",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userId\": \"concurrent-user-1-{{$timestamp}}\",\n  \"greetingUrl\": \"https://demo.twilio.com/docs/classic.mp3\",\n  \"expiresInMinutes\": 5\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/sessions/create",
+          "host": ["{{baseUrl}}"],
+          "path": ["sessions", "create"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Session created successfully', function () {",
+              "    pm.response.to.have.status(201);",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.success).to.be.true;",
+              "    pm.expect(response.data.phoneNumber).to.exist;",
+              "    console.log('User 1 got phone:', response.data.phoneNumber);",
+              "    console.log('Session ID:', response.data.sessionId);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Create Session - User 2", 
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userId\": \"concurrent-user-2-{{$timestamp}}\",\n  \"greetingUrl\": \"https://demo.twilio.com/docs/classic.mp3\",\n  \"expiresInMinutes\": 5\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/sessions/create",
+          "host": ["{{baseUrl}}"],
+          "path": ["sessions", "create"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Session created successfully', function () {",
+              "    pm.response.to.have.status(201);",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.success).to.be.true;",
+              "    pm.expect(response.data.phoneNumber).to.exist;",
+              "    console.log('User 2 got phone:', response.data.phoneNumber);",
+              "    console.log('Session ID:', response.data.sessionId);",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    }
+  ]
+}

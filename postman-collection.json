@@ -1,0 +1,178 @@
+{
+  "info": {
+    "name": "Twilio Voicemail Service",
+    "description": "API collection for testing the Twilio voicemail simulation service",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Sessions",
+      "item": [
+        {
+          "name": "Create Session",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"user123\",\n  \"greetingUrl\": \"https://demo.twilio.com/docs/classic.mp3\",\n  \"expiresInMinutes\": 30\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sessions/create",
+              "host": ["{{baseUrl}}"],
+              "path": ["sessions", "create"]
+            },
+            "description": "Creates a new voicemail session and assigns an available phone number"
+          },
+          "response": []
+        },
+        {
+          "name": "Expire Session",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sessions/{{sessionId}}/expire",
+              "host": ["{{baseUrl}}"],
+              "path": ["sessions", "{{sessionId}}", "expire"]
+            },
+            "description": "Manually expires a session and makes the phone number available again"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Twilio Webhooks",
+      "item": [
+        {
+          "name": "Incoming Call Webhook",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "X-Twilio-Signature",
+                "value": "test-signature",
+                "description": "Twilio signature for validation (disabled in development)"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "To",
+                  "value": "+19342465282",
+                  "description": "The phone number being called"
+                },
+                {
+                  "key": "From",
+                  "value": "+15551234567",
+                  "description": "The caller's phone number"
+                },
+                {
+                  "key": "CallSid",
+                  "value": "CAxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                  "description": "Unique identifier for the call"
+                },
+                {
+                  "key": "AccountSid",
+                  "value": "ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                  "description": "Your Twilio Account SID"
+                },
+                {
+                  "key": "Direction",
+                  "value": "inbound",
+                  "description": "Direction of the call"
+                },
+                {
+                  "key": "CallStatus",
+                  "value": "ringing",
+                  "description": "Current status of the call"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/twilio/incoming-call",
+              "host": ["{{baseUrl}}"],
+              "path": ["twilio", "incoming-call"]
+            },
+            "description": "Simulates a Twilio webhook for incoming calls"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Test Scenarios",
+      "item": [
+        {
+          "name": "Full Test Flow",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"test-user-{{$timestamp}}\",\n  \"greetingUrl\": \"https://demo.twilio.com/docs/classic.mp3\",\n  \"expiresInMinutes\": 5\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sessions/create",
+              "host": ["{{baseUrl}}"],
+              "path": ["sessions", "create"]
+            },
+            "description": "Create a session with dynamic user ID for testing"
+          },
+          "response": []
+        },
+        {
+          "name": "Test with Custom Greeting",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"custom-greeting-user\",\n  \"greetingUrl\": \"https://www.soundjay.com/misc/sounds/bell-ringing-05.wav\",\n  \"expiresInMinutes\": 60\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sessions/create",
+              "host": ["{{baseUrl}}"],
+              "path": ["sessions", "create"]
+            },
+            "description": "Create a session with a custom greeting URL"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "description": "Base URL for the API"
+    },
+    {
+      "key": "sessionId",
+      "value": "",
+      "description": "Session ID returned from create session endpoint"
+    }
+  ]
+}
