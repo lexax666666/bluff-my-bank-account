@@ -1,5 +1,5 @@
 import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
+import postgres = require('postgres');
 import { phoneNumbers } from './schema';
 import * as dotenv from 'dotenv';
 
@@ -17,11 +17,7 @@ async function seed() {
   console.log('Seeding phone numbers...');
 
   const phoneNumbersToInsert = [
-    { number: '+1234567890' },
-    { number: '+1234567891' },
-    { number: '+1234567892' },
-    { number: '+1234567893' },
-    { number: '+1234567894' },
+    { number: '+19342465282' },
   ];
 
   try {
