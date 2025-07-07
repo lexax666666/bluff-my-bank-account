@@ -8,6 +8,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Response } from 'express';
+import { twiml } from 'twilio';
 import { SessionsService } from '../sessions/sessions.service';
 import { TwilioSignatureGuard } from './guards/twilio-signature.guard';
 
@@ -23,27 +24,21 @@ export class TwilioController {
     @Res() res: Response,
   ) {
     const To = body.To as string;
+    const response = new twiml.VoiceResponse();
 
     const session =
       await this.sessionsService.getActiveSessionByPhoneNumber(To);
 
     if (!session) {
-      const twiml = `<?xml version="1.0" encoding="UTF-8"?>
-<Response>
-  <Say>Sorry, this number is not currently active.</Say>
-  <Hangup/>
-</Response>`;
-
-      res.status(HttpStatus.OK).type('text/xml').send(twiml);
-      return;
+      response.say('Sorry, this number is not currently active.');
+      response.hangup();
+    } else {
+      response.play(session.greetingUrl);
+      response.hangup();
     }
 
-    const twiml = `<?xml version="1.0" encoding="UTF-8"?>
-<Response>
-  <Play>${session.greetingUrl}</Play>
-  <Hangup/>
-</Response>`;
-
-    res.status(HttpStatus.OK).type('text/xml').send(twiml);
+    res.status(HttpStatus.OK)
+      .type('text/xml')
+      .send(response.toString());
   }
 }
