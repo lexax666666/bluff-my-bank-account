@@ -1,5 +1,5 @@
 import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres = require('postgres');
+import * as postgres from 'postgres';
 import { phoneNumbers } from './schema';
 import * as dotenv from 'dotenv';
 
